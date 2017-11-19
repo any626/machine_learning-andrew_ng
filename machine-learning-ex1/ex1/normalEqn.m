@@ -12,7 +12,8 @@ theta = zeros(size(X, 2), 1);
 
 % ---------------------- Sample Solution ----------------------
 
-
+X_transposed = X';
+theta = pinv(X_transposed*X)*X_transposed*y;
 
 
 % -------------------------------------------------------------
