@@ -8,7 +8,7 @@ function [h, display_array] = displayData(X, example_width)
 if ~exist('example_width', 'var') || isempty(example_width) 
 	example_width = round(sqrt(size(X, 2)));
 end
-
+disp(example_width);
 % Gray Image
 colormap(gray);
 
