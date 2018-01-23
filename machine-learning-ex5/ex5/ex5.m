@@ -241,3 +241,56 @@ end
 
 fprintf('Program paused. Press enter to continue.\n');
 pause;
+
+%% ====== Plotting learning curves with randomly selected examples ======
+
+iterations = 50;
+lambda     = 0.01;
+
+xRecords    = size(X_poly, 1);
+xValRecords = size(X_poly_val, 1);
+
+setSize     = min(xRecords, xValRecords);
+error_train = zeros(length(setSize), 1);
+error_val   = zeros(length(setSize), 1);
+
+for i = 1:setSize
+    sum_train_error = 0;
+    sum_val_error   = 0;
+    for j = 1:iterations
+        xPerm    = randperm(xRecords);
+        xValPerm = randperm(xValRecords);
+
+        X_poly_rand     = X_poly(xPerm(1:i), :);
+        y_rand          = y(xPerm(1:i), :);
+        X_poly_val_rand = X_poly_val(xValPerm(1:i), :);
+        y_val_rand      = yval(xValPerm(1:i), :);
+
+        theta = trainLinearReg(X_poly_rand, y_rand, lambda);
+
+        [J, grad]       = linearRegCostFunction(X_poly_rand, y_rand, theta, 0);
+        sum_train_error = sum_train_error + J;
+
+        [J, grad]       = linearRegCostFunction(X_poly_val_rand, y_val_rand, theta, 0);
+        sum_val_error   = sum_val_error + J;
+    end
+    error_train(i) = sum_train_error/iterations;
+    error_val(i)   = sum_val_error/iterations;
+end
+
+
+close all;
+plot(1:setSize, error_train, 1:setSize, error_val);
+title(sprintf('Polynomial Regression Learning Curve (lambda = %f)', lambda));
+legend('Train', 'CrossValidation');
+xlabel('Number of training examples');
+ylabel('Error');
+
+fprintf('# Training Examples\tTrain Error\tValidation Error\n');
+for i = 1:setSize
+    fprintf('\t%d\t\t%f\t%f\n', ...
+            i, error_train(i),  error_val(i));
+end
+
+fprintf('Program paused. Press enter to continue.\n');
+pause;
